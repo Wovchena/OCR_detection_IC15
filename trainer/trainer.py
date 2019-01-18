@@ -3,6 +3,7 @@ import torch
 from base import BaseTrainer
 from utils.bbox import Toolbox
 from utils.visualize import Visualizer
+import tqdm
 class Trainer(BaseTrainer):
     """
     Trainer class
@@ -57,6 +58,7 @@ class Trainer(BaseTrainer):
         self.model.train()
 
         total_loss = 0
+        pbar = tqdm.tqdm(self.data_loader, 'Epoch ' + str(epoch), ncols=120)
         total_metrics = np.zeros(len(self.metrics))
         for batch_idx, gt in enumerate(self.data_loader):
             img, score_map, geo_map, training_mask, transcript = gt
@@ -75,13 +77,15 @@ class Trainer(BaseTrainer):
 
             total_metrics += 0
 
-            if self.verbosity >= 2 and batch_idx % self.log_step == 0:
-                self.logger.info('Train Epoch: {} [{}/{} ({:.0f}%)] Loss: {:.6f}'.format(
-                    epoch,
-                    batch_idx * self.data_loader.batch_size,
-                    len(self.data_loader) * self.data_loader.batch_size,
-                    100.0 * batch_idx / len(self.data_loader),
-                    loss.item()))
+            pbar.set_postfix_str(f'Loss: {loss.item():.4f}', refresh=False)
+
+            # if self.verbosity >= 2 and batch_idx % self.log_step == 0:
+            #     self.logger.info('Train Epoch: {} [{}/{} ({:.0f}%)] Loss: {:.6f}'.format(
+            #         epoch,
+            #         batch_idx * self.data_loader.batch_size,
+            #         len(self.data_loader) * self.data_loader.batch_size,
+            #         100.0 * batch_idx / len(self.data_loader),
+            #         loss.item()))
         self.visdom.plot('train_loss', total_loss / len(self.data_loader))
         log = {
             'loss': total_loss / len(self.data_loader),
