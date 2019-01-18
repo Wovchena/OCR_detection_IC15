@@ -3,8 +3,8 @@
     "cuda": true,
     "gpus": [0],
     "data_loader": {
-        "dataset":"icdar2015",
-        "data_dir": "./datasets/ICDAR2015",
+        "dataset":"synth800k",
+        "data_dir": "C:\\Users\\vzlobin\\Downloads\\SynthText\\SynthText",
         "batch_size": 1,
         "shuffle": true,
         "workers": 4
