@@ -9,6 +9,7 @@ import pathlib
 import traceback
 from model.model import FOTSModel
 from utils.bbox import Toolbox
+from scipy import stats
 
 logging.basicConfig(level=logging.DEBUG, format='')
 
@@ -95,23 +96,26 @@ def main(args:argparse.Namespace):
             recall = true_pos / (true_pos + false_neg)
         else:
             recall = 0
-        print("TP: %d, FP: %d, FN: %d, precision: %f, recall: %f" % (true_pos, false_pos, false_neg, precision, recall))  
-            
+        if precision > 0 and recall > 0:
+            hmean = stats.hmean([precision, recall])
+        else:
+            hmean = 0
+        print("TP: %d, FP: %d, FN: %d, precision: %f, recall: %f, hmean: %f, %s" % (true_pos, false_pos, false_neg, precision, recall, hmean, image_fn))
 
 
 if __name__ == '__main__':
     logger = logging.getLogger()
 
     parser = argparse.ArgumentParser(description='Model eval')
-    parser.add_argument('-m', '--model', default='./saved/FOTS/model_best.pth.tar', type=pathlib.Path,
+    parser.add_argument('-m', '--model', default='./saved/FOTS/retrained_model.pth.tar', type=pathlib.Path,
                         help='path to model')
     parser.add_argument('-o', '--output_img_dir', default='./results/images', type=pathlib.Path,
                         help='output dir for drawn images')
     parser.add_argument('-t', '--output_txt_dir', default='./results/groundtruth', type=pathlib.Path,
                         help='output dir for drawn images')
-    parser.add_argument('-i', '--image_dir', default='./datasets/ICDAR2015/ch4_test_images', type=pathlib.Path, 
+    parser.add_argument('-i', '--image_dir', default='../FOTS.PyTorch/data/icdar/icdar2015/4.4/training/ch4_test_images', type=pathlib.Path,
                         help='dir for input images')
-    parser.add_argument('-a', '--annotation_dir', default='./datasets/ICDAR2015/Challenge4_Test_Task1_GT', type=pathlib.Path, 
+    parser.add_argument('-a', '--annotation_dir', default='../FOTS.PyTorch/data/icdar/icdar2015/4.4/training/Challenge4_Test_Task4_GT', type=pathlib.Path,
                         help='dir for input images')
                         
     args = parser.parse_args()

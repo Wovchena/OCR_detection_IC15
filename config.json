@@ -5,7 +5,7 @@
     "data_loader": {
         "dataset":"synth800k",
         "data_dir": "C:\\Users\\vzlobin\\Downloads\\SynthText\\SynthText",
-        "batch_size": 1,
+        "batch_size": 5,
         "shuffle": true,
         "workers": 4
     },

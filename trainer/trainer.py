@@ -60,7 +60,7 @@ class Trainer(BaseTrainer):
         total_loss = 0
         pbar = tqdm.tqdm(self.data_loader, 'Epoch ' + str(epoch), ncols=120)
         total_metrics = np.zeros(len(self.metrics))
-        for batch_idx, gt in enumerate(self.data_loader):
+        for batch_idx, gt in enumerate(pbar):
             img, score_map, geo_map, training_mask, transcript = gt
             img, score_map, geo_map, training_mask = self._to_tensor(img, score_map, geo_map, training_mask)
             recog_map = None
